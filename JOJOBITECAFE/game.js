@@ -1,28 +1,39 @@
 // game.js
+import IntroScene from './intro.js';
+import InstructionsScene from './instructions.js';
 import MainHall from './mainhall.js';
 import Kitchen from './kitchen.js';
 import MainHall2 from './mainhall2.js';
+import Escape from './escape.js';
+import GameOver from './gameover.js';
+import winner from './winner.js';
 
 const config = {
   type: Phaser.AUTO,
-  width: 640,  // or 32*20
-  height: 640, // or 32*20
+  width: 800,
+  height: 600,
+  scale: {
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+  },
   physics: {
     default: 'arcade',
     arcade: {
-      gravity: { y: 0 },
-      debug: true
-    }
+      debug: false,
+    },
   },
-  scale: {
-    mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_BOTH
-  },
-  backgroundColor: '#555555',
-  pixelArt: true,
-  scene: [MainHall, Kitchen, MainHall2]
+  scene: [
+    IntroScene,
+    InstructionsScene,
+    MainHall,
+    Kitchen,
+    MainHall2,
+    Escape,
+    GameOver,
+    winner
+  ]
 };
 
-new Phaser.Game(config);
-
-
+window.addEventListener('load', () => {
+  const game = new Phaser.Game(config);
+});

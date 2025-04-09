@@ -1,7 +1,7 @@
 // mainhall2.js
-export default class MainHall2 extends Phaser.Scene {
+export default class mainhall2 extends Phaser.Scene {
   constructor() {
-    super({ key: 'mailhall2' }); // Ensure key matches what you call in scene.start()
+    super({ key: 'mainhall2' }); // Ensure key matches what you call in scene.start()
     this.player = null;
     this.cursors = null;
   }
@@ -13,7 +13,7 @@ export default class MainHall2 extends Phaser.Scene {
 
   preload() {
     // Load the horror map tilemap (exported as JSON)
-    this.load.tilemapTiledJSON('mailhall2', 'assets/mainhall2.tmj');
+    this.load.tilemapTiledJSON('mainhall2', 'assets/mainhall2.tmj');
 
     // Load tileset images (names must match Tiled)
     this.load.image('pixel-cyberpunk-interiorimg', 'assets/pixel-cyberpunk-interior.png');
@@ -25,7 +25,7 @@ export default class MainHall2 extends Phaser.Scene {
   }
 
   create() {
-    const map = this.make.tilemap({ key: 'mailhall2' });
+    const map = this.make.tilemap({ key: 'mainhall2' });
     const tileset1 = map.addTilesetImage('pixel-cyberpunk-interior', 'pixel-cyberpunk-interiorimg');
     const tileset2 = map.addTilesetImage('pipoya', 'pipoyaimg');
     const tileset3 = map.addTilesetImage('free_overview', 'free_overview.png');
@@ -33,7 +33,9 @@ export default class MainHall2 extends Phaser.Scene {
 
     // Create layers (adjust names as needed)
     map.createLayer('floor', tilesArray, 0, 0);
-    map.createLayer('objects', tilesArray, 0, 0);
+    map.createLayer('table', tilesArray, 0, 0);
+    map.createLayer('chashier', tilesArray, 0, 0);
+    map.createLayer('food', tilesArray, 0, 0);
     // Add any additional horror effects or layers here
 
     // Position the player. If passed from Kitchen, use it; otherwise create a new one.
@@ -102,7 +104,38 @@ export default class MainHall2 extends Phaser.Scene {
     } else {
       this.player.anims.stop();
     }
+    
+    // Stop animation if idle
+    if (
+      !this.cursors.left.isDown &&
+      !this.cursors.right.isDown &&
+      !this.cursors.up.isDown &&
+      !this.cursors.down.isDown
+    ) {
+      this.player.anims.stop();
+    }
+
+    // Debug: player position
+    // console.log(Player in Kitchen update: x=${this.player.x}, y=${this.player.y});
+
+    // Example: transition to mainhall2 if within a certain area
+    if (
+      this.player.x >= 640 &&
+      this.player.x <= 650 &&
+      this.player.y >= 135&&
+      this.player.y <= 185) 
+      {
+      console.log('Switching to escape scene');
+
+      // ✅ Pass just playerData — NOT the full sprite!
+      this.scene.start('escape', {
+        playerData: {
+          x: this.player.x,
+          y: this.player.y,
+          frame: this.player.frame.name 
+        }
+      });
   }
 }
 
-
+}

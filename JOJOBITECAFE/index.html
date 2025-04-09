@@ -2,14 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Phaser Scene Transition Example</title>
+  <title>Phaser Game</title>
+  <link rel="icon" href="data:,"> <!-- Fix favicon error -->
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #000;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+  <!-- Load Phaser first -->
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.js"></script>
 </head>
 <body>
-  <!-- Load Phaser from CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.js"></script>
-  <!-- Load our main game file as a module -->
   <script type="module" src="./game.js"></script>
 </body>
 </html>
-
 
