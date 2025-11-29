@@ -27,22 +27,14 @@ class world extends Phaser.Scene {
       frameWidth: 64,
       frameHeight: 64,
     });
-    this.load.spritesheet("cikponti", "assets/cikponti.png", {
-      frameWidth: 64,
-      frameHeight: 64,
-    });
+    // this.load.spritesheet("cikponti", "assets/cikponti.png", {
+    //   frameWidth: 64,
+    //   frameHeight: 64,
+    // });
   }
 
   create() {
     console.log("*** world scene");
-
-       this.load.image("intro1", "assets/intro1.png");
-
-        var spaceDown = this.input.keyboard.addKey('SPACE');
-
-        spaceDown.on('down', function(){
-            this.scene.start("world");
-            }, this );
 
     // Step 3 - Create the map from main - worldmap
     let map = this.make.tilemap({ key: "map1" });
@@ -150,22 +142,7 @@ class world extends Phaser.Scene {
 
     this.player.setCollideWorldBounds(true);
 
-    // this.physics.moveToObject( this.cikponti, this.rossa, 60, 3000);
-
-
-    ///enemy tween
-    // this.cikponti = this.physics.add
-    //   .sprite(100, 300, "cikponti")
-    //   .play("cikponti-right");
-
-    // this.tweens.add({
-    //   targets: this.cikponti,
-    //   x: 280,
-    //   flipX: true,
-    //   yoyo: true,
-    //   duration: 1800,
-    //   repeat: -1,
-    // });
+  
   }
 
   update() {

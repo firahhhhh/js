@@ -190,52 +190,6 @@
         }, 
         {
          "draworder":"topdown",
-         "id":22,
-         "name":"flower1",
-         "objects":[
-                {
-                 "height":0,
-                 "id":4,
-                 "name":"start",
-                 "point":true,
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":528.787977359964,
-                 "y":635.378309804177
-                }],
-         "opacity":1,
-         "type":"objectgroup",
-         "visible":true,
-         "x":0,
-         "y":0
-        }, 
-        {
-         "draworder":"topdown",
-         "id":23,
-         "name":"flower2",
-         "objects":[
-                {
-                 "height":0,
-                 "id":6,
-                 "name":"start",
-                 "point":true,
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":301.45078394379,
-                 "y":149.892654999675
-                }],
-         "opacity":1,
-         "type":"objectgroup",
-         "visible":true,
-         "x":0,
-         "y":0
-        }, 
-        {
-         "draworder":"topdown",
          "id":21,
          "name":"objectLayer",
          "objects":[
@@ -248,8 +202,32 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":47.4660074165637,
-                 "y":347.251317415913
+                 "x":48.2987369722204,
+                 "y":346.41826302778
+                }, 
+                {
+                 "height":0,
+                 "id":7,
+                 "name":"rose",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":398.881009693579,
+                 "y":616.225359443107
+                }, 
+                {
+                 "height":0,
+                 "id":8,
+                 "name":"enemy1",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":104.924858499772,
+                 "y":522.1260815822
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -257,8 +235,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":24,
- "nextobjectid":7,
+ "nextlayerid":23,
+ "nextobjectid":9,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.8.6",
