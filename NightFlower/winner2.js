@@ -6,6 +6,9 @@ class winner2 extends Phaser.Scene {
 
     preload() {
         this.load.image("winner2IMG", "assets/winner2.png");
+
+        // ⭐ ADD YOUR WINNER SOUND HERE
+        this.load.audio("winnerSound", "assets/winner.mp3");
     }
 
     create() {
@@ -15,12 +18,21 @@ class winner2 extends Phaser.Scene {
         // Display image
         this.add.image(320, 320, 'winner2IMG').setOrigin(0.5, 0.5);
 
-        // Space to return to main1
+        // ⭐ PLAY THE WINNER SOUND
+        this.winMusic = this.sound.add("winnerSound", { volume: 0.8 });
+        this.winMusic.play();
+
+        // SPACE to return to main1
         let spaceDown = this.input.keyboard.addKey('SPACE');
 
         spaceDown.on('down', function () {
             console.log('Jump to main1');
-            this.scene.start('main1');   // ✅ FIXED
+
+            // ⭐ STOP MUSIC BEFORE LEAVING
+            if (this.winMusic) this.winMusic.stop();
+
+            this.scene.start('main1');
         }, this);
     }
 }
+

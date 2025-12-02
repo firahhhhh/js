@@ -1,183 +1,175 @@
 class world extends Phaser.Scene {
   constructor() {
-    super({
-      key: "world",
-    });
+    super({ key: "world" });
   }
 
   init(data) {
     this.player = data.player;
-    this.inventory = data.inventory;
+    this.inventory = data.inventory || [];
   }
 
   preload() {
-    // Step 1, load JSON
+    // MAP
     this.load.tilemapTiledJSON("map1", "assets/map1.tmj");
 
-    // Step 2 : Preload any images here
+    // TILES
     this.load.image("InteriorIMG", "assets/Interior.png");
     this.load.image("pipoyaIMG", "assets/pipoya.png");
     this.load.image("WoodIMG", "assets/Wood.png");
 
-//     this.load.spritesheet('flowersImg', 'assets/flowers.png',
-//  {  frameWidth:16, frameHeight:16 });
-
-    // preload generated character spritesheets
+    // PLAYER
     this.load.spritesheet("rossa", "assets/rossa.png", {
       frameWidth: 64,
       frameHeight: 64,
     });
-    // this.load.spritesheet("cikponti", "assets/cikponti.png", {
-    //   frameWidth: 64,
-    //   frameHeight: 64,
-    // });
   }
 
   create() {
     console.log("*** world scene");
 
-    // Step 3 - Create the map from main - worldmap
     let map = this.make.tilemap({ key: "map1" });
 
-    // Step 4: Load the game tiles
+    // tilesets
     let InteriorTiles = map.addTilesetImage("Interior", "InteriorIMG");
     let pipoyaTiles = map.addTilesetImage("pipoya", "pipoyaIMG");
     let WoodTiles = map.addTilesetImage("Wood", "WoodIMG");
 
     let tilesArray = [InteriorTiles, pipoyaTiles, WoodTiles];
+
+    // LAYERS: create walkable layers first, then object/frame layers on top
     this.floorlayer = map.createLayer("floor", tilesArray, 0, 0);
+    this.floor2layer = map.createLayer("floor2", tilesArray, 0, 0);
+
+    // top layers that should block player
     this.framelayer = map.createLayer("frame", tilesArray, 0, 0);
     this.objectlayer = map.createLayer("object", tilesArray, 0, 0);
     this.object2layer = map.createLayer("object2", tilesArray, 0, 0);
 
-    // Step 5: Load in layers, from bottom to top
-    this.floor = map.createLayer("floor", tilesArray, 0, 0);
-    this.frame = map.createLayer("frame", tilesArray, 0, 0);
-    this.object = map.createLayer("object", tilesArray, 0, 0);
-    this.object2 = map.createLayer("object2", tilesArray, 0, 0);
+    // ---------- IMPORTANT ----------
+    // Make the blocking layers collide. Two approaches:
+    // 1) Preferred: if you set "collides" property on tiles in Tiled, use:
+    //    this.framelayer.setCollisionByProperty({ collides: true });
+    //    this.objectlayer.setCollisionByProperty({ collides: true });
+    //    this.object2layer.setCollisionByProperty({ collides: true });
+    //
+    // 2) Fallback: collide every tile that exists in the layer (use this if you didn't set collides in Tiled):
+    this.framelayer.setCollisionByExclusion([-1]);
+    this.objectlayer.setCollisionByExclusion([-1]);
+    this.object2layer.setCollisionByExclusion([-1]);
+    // --------------------------------
 
+    // START POSITION
     let start = map.findObject("objectLayer", (obj) => obj.name === "start");
-    console.log("Start Object:", start);
 
     if (!start) {
       console.error("Start object not found in the map.");
-      return; // Exit if "start" object is not found
-    }
-
-    // Create the player sprite
-    this.player = this.physics.add.sprite(start.x, start.y, "rossa");
-    window.player = this.player;
-    console.log("Player created:", this.player);
-
-    // Check if player is correctly created
-    if (!this.player) {
-      console.error("Player sprite not initialized correctly.");
       return;
     }
 
-    // Player animations
-    this.anims.create({
-      key: "rossa-up",
-      frames: this.anims.generateFrameNumbers("rossa", {
-        start: 105,
-        end: 112,
-      }),
-      frameRate: 5,
-      repeat: -1,
-    });
+    // PLAYER
+    this.player = this.physics.add.sprite(start.x, start.y, "rossa");
+    this.player.setCollideWorldBounds(true);
 
-    this.anims.create({
-      key: "rossa-left",
-      frames: this.anims.generateFrameNumbers("rossa", {
-        start: 118,
-        end: 125,
-      }),
-      frameRate: 5,
-      repeat: -1,
-    });
+    // PLAYER BODY SIZE (smaller than sprite so collisions feel correct)
+    this.player.body.setSize(this.player.width * 0.5, this.player.height * 0.6);
+    this.player.body.setOffset(this.player.width * 0.25, this.player.height * 0.35);
 
-    this.anims.create({
-      key: "rossa-down",
-      frames: this.anims.generateFrameNumbers("rossa", {
-        start: 131,
-        end: 138,
-      }),
-      frameRate: 5,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: "rossa-right",
-      frames: this.anims.generateFrameNumbers("rossa", {
-        start: 144,
-        end: 151,
-      }),
-      frameRate: 5,
-      repeat: -1,
-    });
-
-   
-    // Adjust player body size only if player is properly initialized
-    if (this.player && this.player.width && this.player.height) {
-      this.player.body.setSize(
-        this.player.width * 0.8,
-        this.player.height * 0.8
-      );
-      console.log("Player size adjusted:", this.player.body);
-    } else {
-      console.warn("Player size could not be adjusted.");
+    // ANIMATIONS
+    if (!this.anims.exists("rossa-up")) {
+      this.anims.create({
+        key: "rossa-up",
+        frames: this.anims.generateFrameNumbers("rossa", { start: 105, end: 112 }),
+        frameRate: 5,
+        repeat: -1,
+      });
+    }
+    if (!this.anims.exists("rossa-left")) {
+      this.anims.create({
+        key: "rossa-left",
+        frames: this.anims.generateFrameNumbers("rossa", { start: 118, end: 125 }),
+        frameRate: 5,
+        repeat: -1,
+      });
+    }
+    if (!this.anims.exists("rossa-down")) {
+      this.anims.create({
+        key: "rossa-down",
+        frames: this.anims.generateFrameNumbers("rossa", { start: 131, end: 138 }),
+        frameRate: 5,
+        repeat: -1,
+      });
+    }
+    if (!this.anims.exists("rossa-right")) {
+      this.anims.create({
+        key: "rossa-right",
+        frames: this.anims.generateFrameNumbers("rossa", { start: 144, end: 151 }),
+        frameRate: 5,
+        repeat: -1,
+      });
     }
 
-    // Create arrow keys input
+    // ---------- COLLIDERS ----------
+    // Collide player with blocking layers so player cannot walk through them
+    this.physics.add.collider(this.player, this.framelayer);
+    this.physics.add.collider(this.player, this.objectlayer);
+    this.physics.add.collider(this.player, this.object2layer);
+
+    // If you later spawn enemies or flowers, make sure to add colliders between them and blocking layers too:
+    // this.physics.add.collider(enemy, this.framelayer);
+    // this.physics.add.collider(flowerGroup, this.objectlayer);
+
+    // INPUT
     this.cursors = this.input.keyboard.createCursorKeys();
 
-    // Camera follow player
+    // CAMERA
     this.cameras.main.startFollow(this.player);
     this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
-    // Adjust physics world bounds based on the ground layer
-
-    this.physics.world.bounds.width = this.floorlayer.width;
-    this.physics.world.bounds.height = this.floorlayer.height;
-
-    this.player.setCollideWorldBounds(true);
-
-  
+    // Adjust physics world bounds
+    this.physics.world.bounds.width = map.widthInPixels;
+    this.physics.world.bounds.height = map.heightInPixels;
   }
 
   update() {
     let speed = 200;
+    this.player.setVelocity(0);
 
     if (this.cursors.left.isDown) {
-      this.player.body.setVelocityX(-speed);
-      this.player.anims.play("rossa-left", true); // walk left
+      this.player.setVelocityX(-speed);
+      this.player.anims.play("rossa-left", true);
     } else if (this.cursors.right.isDown) {
-      this.player.body.setVelocityX(speed);
+      this.player.setVelocityX(speed);
       this.player.anims.play("rossa-right", true);
-    } else if (this.cursors.up.isDown) {
-      this.player.body.setVelocityY(-speed);
+    }
+
+    if (this.cursors.up.isDown) {
+      this.player.setVelocityY(-speed);
       this.player.anims.play("rossa-up", true);
     } else if (this.cursors.down.isDown) {
-      this.player.body.setVelocityY(speed);
+      this.player.setVelocityY(speed);
       this.player.anims.play("rossa-down", true);
-    } else {
-      this.player.anims.stop();
-      this.player.body.setVelocity(0, 0);
     }
+
+    if (
+      !this.cursors.left.isDown &&
+      !this.cursors.right.isDown &&
+      !this.cursors.up.isDown &&
+      !this.cursors.down.isDown
+    ) {
+      this.player.anims.stop();
+    }
+
+    // teleport to room1
     if (
       this.player.x > 554 &&
       this.player.x < 614 &&
       this.player.y > 291 &&
       this.player.y < 384
     ) {
-      console.log("Go to Room1 function");
-      this.room1();
+      this.scene.start("room1", { inventory: this.inventory });
     }
   }
-
-  // Function room1
-  room1(player, tile) {
-    console.log("Function to jump to room1 scene");
-    this.scene.start("room1");
-  }
 }
+
+
+
